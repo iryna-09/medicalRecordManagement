@@ -1,7 +1,7 @@
 package com.template.flows;
 
 import co.paralleluniverse.fibers.Suspendable;
-import com.template.contracts.TemplateContract;
+import com.template.contracts.MedicalRecordsContract;
 import com.template.states.MedicalRecordsState;
 import net.corda.core.flows.*;
 import net.corda.core.identity.Party;
@@ -54,7 +54,7 @@ public class FillMedicalRecords extends FlowLogic<SignedTransaction> {
 
         // Step 4. Add the output state, as well as a command to the transaction builder.
         builder.addOutputState(output);
-        builder.addCommand(new TemplateContract.Commands.Create(), Arrays.asList(this.requestHospital.getOwningKey()) );
+        builder.addCommand(new MedicalRecordsContract.Commands.Create(), Arrays.asList(this.requestHospital.getOwningKey()) );
 
 
         // Step 5. Verify and sign it with our KeyPair.

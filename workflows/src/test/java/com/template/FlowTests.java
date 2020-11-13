@@ -21,6 +21,8 @@ public class FlowTests {
     private MockNetwork network;
     private StartedMockNode a;
     private StartedMockNode b;
+    private StartedMockNode c;
+
 
     @Before
     public void setup() {
@@ -29,8 +31,9 @@ public class FlowTests {
                 TestCordapp.findCordapp("com.template.flows"))));
         a = network.createPartyNode(new CordaX500Name("StMarysHospital", "London", "GB"));
         b = network.createPartyNode(new CordaX500Name("CharitéHospital", "Berlin", "DE"));
+        c = network.createPartyNode(new CordaX500Name("Bolnitsa", "Moscow", "RU"));
         // For real nodes this happens automatically, but we have to manually register the flow for tests.
-        for (StartedMockNode node : ImmutableList.of(a, b)) {
+        for (StartedMockNode node : ImmutableList.of(a, b, c)) {
             node.registerInitiatedFlow(ResponderPatientRecords.class);
         }
         network.runNetwork();
@@ -42,7 +45,7 @@ public class FlowTests {
     }
 
     @Test
-    public void dummyTest2() throws ExecutionException, InterruptedException {
+    public void createRecordTest() throws ExecutionException, InterruptedException {
         CordaFuture<SignedTransaction> future = a.startFlow(new FillMedicalRecords("Alexey", "data"));
         network.runNetwork();
         SignedTransaction ptx = future.get();
@@ -50,7 +53,7 @@ public class FlowTests {
     }
 
     @Test
-    public void dummyTest() throws ExecutionException, InterruptedException {
+    public void exchangeOfRecordsTest() throws ExecutionException, InterruptedException {
         CordaFuture<SignedTransaction> future = a.startFlow(new FillMedicalRecords("Alexey", "data"));
         network.runNetwork();
         SignedTransaction ptx = future.get();
@@ -60,6 +63,4 @@ public class FlowTests {
         SignedTransaction ptx1 = future1.get();
         assert(!ptx1.getTx().getOutputs().isEmpty());
     }
-
-
 }

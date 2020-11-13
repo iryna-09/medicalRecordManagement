@@ -1,7 +1,7 @@
 package com.template.flows;
 
 import co.paralleluniverse.fibers.Suspendable;
-import com.template.contracts.TemplateContract;
+import com.template.contracts.MedicalRecordsContract;
 import com.template.states.MedicalRecordsState;
 import net.corda.core.flows.*;
 import net.corda.core.identity.Party;
@@ -11,8 +11,6 @@ import net.corda.core.utilities.ProgressTracker;
 import net.corda.core.utilities.UntrustworthyData;
 
 import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @InitiatingFlow
 @StartableByRPC
@@ -57,7 +55,7 @@ public class RequestPatientRecords extends FlowLogic<SignedTransaction> {
 
         // Step 4. Add the iou as an output state, as well as a command to the transaction builder.
         builder.addOutputState(output);
-        builder.addCommand(new TemplateContract.Commands.Request(), Arrays.asList(this.initiatingHospital.getOwningKey(),this.respondingHospital.getOwningKey()) );
+        builder.addCommand(new MedicalRecordsContract.Commands.Request(), Arrays.asList(this.initiatingHospital.getOwningKey(),this.respondingHospital.getOwningKey()) );
 
 
         builder.verify(getServiceHub());

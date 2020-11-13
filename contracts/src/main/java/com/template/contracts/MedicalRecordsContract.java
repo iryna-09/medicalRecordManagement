@@ -15,9 +15,9 @@ import static net.corda.core.contracts.ContractsDSL.requireThat;
 // ************
 // * Contract *
 // ************
-public class TemplateContract implements Contract {
+public class MedicalRecordsContract implements Contract {
     // This is used to identify our contract when building a transaction.
-    public static final String ID = "com.template.contracts.TemplateContract";
+    public static final String ID = "com.template.contracts.MedicalRecordsContract";
 
     // A transaction is valid if the verify() function of the contract of all the transaction's input and output states
     // does not throw an exception.

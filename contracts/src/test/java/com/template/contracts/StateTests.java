@@ -1,13 +1,29 @@
 package com.template.contracts;
 
-import net.corda.testing.node.MockServices;
+
+import com.template.states.MedicalRecordsState;
+import net.corda.core.identity.CordaX500Name;
+import net.corda.core.identity.Party;
+import net.corda.testing.core.TestIdentity;
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
+
 public class StateTests {
-    private final MockServices ledgerServices = new MockServices();
+    private final Party stMarys = new TestIdentity(new CordaX500Name("StMarysHospital", "London", "GB")).getParty();
+    private final Party charite = new TestIdentity(new CordaX500Name("CharitéHospital", "Berlin", "DE")).getParty();
 
     @Test
-    public void dummyTest() {
+    public void tokenStateHasIssuerOwnerAndAmountParamsOfCorrectTypeInConstructor() {
+        new MedicalRecordsState("Alexey", "data", stMarys, charite);
+    }
 
+    @Test
+    public void tokenStateHasGettersForIssuerOwnerAndAmount() {
+        MedicalRecordsState medicalRecords = new MedicalRecordsState("Alexey", "data", stMarys, charite);
+        assertEquals("Alexey", medicalRecords.getPatientName());
+        assertEquals("data", medicalRecords.getPatientData());
+        assertEquals(stMarys, medicalRecords.getRequestHospital());
+        assertEquals(charite, medicalRecords.getReceiverHospital());
     }
 }
