@@ -24,19 +24,28 @@ public class MedicalRecordsContract implements Contract {
     @Override
     public void verify(LedgerTransaction tx) {
 
-        /* We can use the requireSingleCommand function to extract command data from transaction.
-         * However, it is possible to have multiple commands in a signle transaction.*/
-
-        ArrayList<String> rejectCountries = new ArrayList<String>(Arrays.asList("RU"));
-
         final CommandWithParties<Commands> command = requireSingleCommand(tx.getCommands(), Commands.class);
-        String requesterCountry = command.component2().get(0).getName().getCountry();
-        requireThat(require -> {
-            require.using("Initiator should be not from rejected countries.", !(rejectCountries.contains(requesterCountry)));
-            return null;
-        });
-    }
+        ArrayList<String> rejectCountries = new ArrayList<String>(Arrays.asList("RU"));
+        if (command.getValue() instanceof Commands.Create) {
+            requireThat(require -> {
+                require.using("Request should have no inputs", tx.getInputs().size() == 0);
+                require.using("Request should have one output", tx.getOutputs().size() == 1);
+                return null;
+            });
 
+        } else if (command.getValue() instanceof Commands.Request) {
+            MedicalRecordsState ms = (MedicalRecordsState) tx.getOutputs().get(0).getData();
+            String requesterCountry = ms.getParticipants().get(0).nameOrNull().getCountry();
+            requireThat(require -> {
+                require.using("Initiator should be not from rejected countries.", !(rejectCountries.contains(requesterCountry)));
+                require.using("Initiating hospital should sign request", command.getSigners().contains(ms.getRequestHospital().getOwningKey()));
+                require.using("Receiving hospital should sign request", command.getSigners().contains(ms.getReceiverHospital().getOwningKey()));
+                return null;
+            });
+        } else {
+            throw new IllegalArgumentException("Invalid command");
+        }
+    }
     // Used to indicate the transaction's intent.
     public interface Commands extends CommandData {
         //In our hello-world app, We will only have one command.

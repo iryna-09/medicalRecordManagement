@@ -32,16 +32,16 @@ public class ContractTests {
             // Country is in the list, will fail.
             tx.output(MedicalRecordsContract.ID, medicalRecords2);
             tx.command(Arrays.asList(bolnitsa.getPublicKey(), charite.getPublicKey()), new MedicalRecordsContract.Commands.Request());
-            tx.verifies();
+            tx.fails();
             return null;
         });
 
-//        transaction(ledgerServices, tx -> {
-//            // Country not from the list, will verify.
-//            tx.output(MedicalRecordsContract.ID, medicalRecords);
-//            tx.command(Arrays.asList(stMarys.getPublicKey(), charite.getPublicKey()), new MedicalRecordsContract.Commands.Request());
-//            tx.verifies();
-//            return null;
-//        });
+        transaction(ledgerServices, tx -> {
+            // Country not from the list, will verify.
+            tx.output(MedicalRecordsContract.ID, medicalRecords);
+            tx.command(Arrays.asList(stMarys.getPublicKey(), charite.getPublicKey()), new MedicalRecordsContract.Commands.Request());
+            tx.verifies();
+            return null;
+        });
     }
 }
